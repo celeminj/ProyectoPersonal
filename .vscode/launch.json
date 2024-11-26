@@ -8,7 +8,7 @@
             "name": "Launch Chrome",
             "request": "launch",
             "type": "chrome",
-            "url": "http://localhost:8080/proyectopersonaljordic/register.php",
+            "url": "http://localhost:8080/proyectopersonaljordic/index.php",
             "webRoot": "${workspaceFolder}"
         },
         {
