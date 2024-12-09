@@ -22,7 +22,6 @@ function closeDB() {
     return null;
 }
 
-
 function errorMessage($e)
 {
 
