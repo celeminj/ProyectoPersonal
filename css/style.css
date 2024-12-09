@@ -95,6 +95,15 @@ h1, h2, h3 {
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
+.editarTareas {
+  color: #007bff; 
+  transition: all 0.3s ease; 
+}
+
+.editarTareas:hover {
+  border-color: #00356e; 
+}
+
 /* Espaciado de los botones */
 .btn-group {
   margin-top: 20px;

@@ -1,5 +1,4 @@
 <?php
-require_once '../basedatos/bd.php';
 function deleteTareas($id_tarea) {
     try {
         $conexion = openDB();

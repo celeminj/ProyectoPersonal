@@ -3,10 +3,8 @@ session_start();
 require_once 'basedatos/bd.php';
 require_once 'tareas/selectTareas.php';
 require_once 'selectProyecto.php';
-require_once 'tareas/deleteTareas.php';
 require_once 'proyectos/usuarioAsociadoProyecto.php';
 require_once 'insertProyecto.php';
-
 
 // Verifica que el usuario haya iniciado sesión
 if (!isset($_SESSION['id_usuario'])) {
@@ -27,12 +25,6 @@ if ($id_proyecto) {
 // Resto de la lógica de proyectos
 $userId = $_SESSION['id_usuario'];
 $proyectos = selectProyectos($userId);
-
-
-if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['delete'])) {
-    deleteTareas($id_tarea);
-}
-
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -137,18 +129,24 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['delete'])) {
             <tr >
                 <!-- Columna "En proceso" -->
                 <td class="box droppable" id="in-progress" data-status="1">
+                    
                     <?php foreach ($tareas as $tarea){ ?>
                         <?php if ($tarea['id_estado_tarea'] == 1){ ?>
                             <div class="item" id="task-<?php echo $tarea['id_tarea']; ?>" draggable="true" 
-                                data-id="<?php echo $tarea['id_tarea']; ?>"> 
-                                <a href="editarTareas.php?id_proyecto=<?php echo $id_proyecto; ?>" style="text-decoration: none" >
+                                data-id="<?php echo $tarea['id_tarea']; ?>">
+                                
                                 <strong>Nombre:</strong> <?php echo $tarea['nombre_tarea']; ?><br>
+                                <input type="text" name="nombre_tarea" value="<?php echo $tarea['nombre_tarea']; ?>">
+
                                 <strong>Descripción:</strong> <?php echo $tarea['descripcion']; ?><br>
                                 <strong>Fecha inicio:</strong> <?php echo $tarea['fecha_inicio']; ?><br>
                                 <strong>Fecha final:</strong> <?php echo $tarea['fecha_final']; ?>
                                 <strong>Usuario: </strong> <?php echo $tarea['nombre']; ?>
                                 <strong>Tipo de tarea: </strong> <?php echo $tarea['tipo_tarea']; ?>  </a>
-                                <button type="submit" name="delete" class="btn btn-danger btn-sm">Borrar</button>
+                                </form> 
+                               
+                                
+                               
                             </div>
                         <?php } ?>
                     <?php  } ?>
@@ -160,7 +158,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['delete'])) {
                         <?php if ($tarea['id_estado_tarea'] == 2){ ?>
                             <div class="item" id="task-<?php echo $tarea['id_tarea']; ?>" draggable="true" 
                                 data-id="<?php echo $tarea['id_tarea']; ?>">
-                                <a href="editarTareas.php?id_proyecto=<?php echo $id_proyecto; ?>" style="text-decoration: none" >
+                                <a href="welcome.php" style="text-decoration: none" >
                                 <strong>Nombre:</strong> <?php echo $tarea['nombre_tarea']; ?><br>
                                 <strong>Descripción:</strong> <?php echo $tarea['descripcion']; ?><br>
                                 <strong>Fecha inicio:</strong> <?php echo $tarea['fecha_inicio']; ?><br>
@@ -168,7 +166,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['delete'])) {
                                 <strong>Usuario: </strong> <?php echo $tarea['nombre']; ?>
                                 <strong>Tipo de tarea: </strong> <?php echo $tarea['tipo_tarea']; ?>  
                                 </a>
-                                <button type="submit" name="delete" class="btn btn-danger btn-sm">Borrar</button>
                             </div>
                         <?php }?>
                     <?php } ?>
@@ -180,7 +177,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['delete'])) {
                         <?php if ($tarea['id_estado_tarea'] == 3){ ?>
                             <div class="item" id="task-<?php echo $tarea['id_tarea']; ?>" draggable="true" 
                                 data-id="<?php echo $tarea['id_tarea']; ?>">
-                                <a href="editarTareas.php?id_proyecto=<?php echo $id_proyecto; ?>" style="text-decoration: none" >
+                                <a href="welcome.php" style="text-decoration: none" >
                                 <strong>Nombre:</strong> <?php echo $tarea['nombre_tarea']; ?><br>
                                 <strong>Descripción:</strong> <?php echo $tarea['descripcion']; ?><br>
                                 <strong>Fecha inicio:</strong> <?php echo $tarea['fecha_inicio']; ?><br>
@@ -188,7 +185,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['delete'])) {
                                 <strong>Usuario: </strong> <?php echo $tarea['nombre']; ?>
                                 <strong>Tipo de tarea: </strong> <?php echo $tarea['tipo_tarea']; ?>
                                 </a>  
-                                <button type="submit" name="delete" class="btn btn-danger btn-sm">Borrar</button>
                             </div>
                         <?php } ?>
                     <?php } ?>
