@@ -193,8 +193,9 @@ $usuarios = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
 
                 <div class="mt-3 text-center">
-                                
+                    <form action="php_controllers/tareaController.php" method="POST">
                     <button type="submit" class="btn btn-primary" name="insertTareas">Añadir</button>
+                    </form>
                   
                     <a href="welcome.php" class="btn btn-secondary">Cancelar</a>
                    

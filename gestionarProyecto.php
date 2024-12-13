@@ -148,11 +148,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['delete'])) {
                                 <strong>Fecha final:</strong> <?php echo $tarea['fecha_final']; ?>
                                 <strong>Usuario: </strong> <?php echo $tarea['nombre']; ?>
                                 <strong>Tipo de tarea: </strong> <?php echo $tarea['tipo_tarea']; ?>  </a>
-                                <button type="submit" name="delete" class="btn btn-danger btn-sm">Borrar</button>
+                                <form action="php_controllers/tareaController.php" method="POST">
+                                    <input type="hidden" name="id_tarea" value="<?php echo $tarea['id_tarea']; ?>">
+                                    <button type="submit" name="delete" class="btn btn-danger btn-sm">Borrar</button>
+                                </form>
+                              
                             </div>
                         <?php } ?>
                     <?php  } ?>
                 </td>
+
 
                 <!-- Columna "En revisión" -->
                 <td class="box droppable" id="review" data-status="2">
@@ -168,7 +173,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['delete'])) {
                                 <strong>Usuario: </strong> <?php echo $tarea['nombre']; ?>
                                 <strong>Tipo de tarea: </strong> <?php echo $tarea['tipo_tarea']; ?>  
                                 </a>
-                                <button type="submit" name="delete" class="btn btn-danger btn-sm">Borrar</button>
+                                <form action="php_controllers/tareaController.php" method="POST">
+                                    <input type="hidden" name="id_tarea" value="<?php echo $tarea['id_tarea']; ?>">
+                                    <button type="submit" name="delete" class="btn btn-danger btn-sm">Borrar</button>
+                                </form>
                             </div>
                         <?php }?>
                     <?php } ?>
@@ -188,7 +196,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['delete'])) {
                                 <strong>Usuario: </strong> <?php echo $tarea['nombre']; ?>
                                 <strong>Tipo de tarea: </strong> <?php echo $tarea['tipo_tarea']; ?>
                                 </a>  
-                                <button type="submit" name="delete" class="btn btn-danger btn-sm">Borrar</button>
+                                <form action="php_controllers/tareaController.php" method="POST">
+                                    <input type="hidden" name="id_tarea" value="<?php echo $tarea['id_tarea']; ?>">
+                                    <button type="submit" name="delete" class="btn btn-danger btn-sm">Borrar</button>
+                                </form>
                             </div>
                         <?php } ?>
                     <?php } ?>
