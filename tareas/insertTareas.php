@@ -2,9 +2,10 @@
 require_once __DIR__ . '/../basedatos/bd.php';
 
 
-function insertTarea($nombre_tarea, $descripcion, $fecha_inicio, $fecha_final, $id_usuario, $id_proyecto, $id_estado_tarea, $id_tipo_tarea) {
+function insertTarea($nombre_tarea, $descripcion, $fecha_inicio, $fecha_final, $id_usuario, $id_proyecto, $id_estado_tarea, $id_tipo_tarea)
+{
     try {
-        $conexion = openDB(); 
+        $conexion = openDB();
 
         $sentenciaText = "INSERT INTO tareas (nombre_tarea, descripcion, fecha_inicio, fecha_final, id_usuario, id_proyecto, id_estado_tarea, id_tipo_tarea) 
                           VALUES (:nombre_tarea, :descripcion, :fecha_inicio, :fecha_final, :id_usuario, :id_proyecto, :id_estado_tarea, :id_tipo_tarea)";

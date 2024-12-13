@@ -1,17 +1,18 @@
-<?php 
+<?php
 require_once __DIR__ . '/../basedatos/bd.php';
-function updateProyecto($id_proyecto,$titulo_proyecto){
+function updateProyecto($id_proyecto, $titulo_proyecto)
+{
 
     try {
-    $conexion = openDB();
+        $conexion = openDB();
 
-    $sentencia = $conexion->prepare("UPDATE
+        $sentencia = $conexion->prepare("UPDATE
     proyectos SET titulo_proyecto = :titulo_proyecto 
              WHERE id_proyecto = :id_proyecto"
-     ); 
-      $sentencia->bindParam(':id_proyecto', $id_proyecto, PDO::PARAM_INT);
-      $sentencia->bindParam(':titulo_proyecto', $titulo_proyecto, PDO::PARAM_STR);
-      
+        );
+        $sentencia->bindParam(':id_proyecto', $id_proyecto, PDO::PARAM_INT);
+        $sentencia->bindParam(':titulo_proyecto', $titulo_proyecto, PDO::PARAM_STR);
+
 
         // Ejecutar la sentencia
         $sentencia->execute();

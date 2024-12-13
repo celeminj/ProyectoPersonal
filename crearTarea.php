@@ -45,9 +45,7 @@ $usuarios = $stmt->fetchAll(PDO::FETCH_ASSOC);
 </head>
 
 <body>
-    <?php
-    require_once('mensaje.php');
-    ?>
+    <?php require_once('mensaje.php');?>
     <div class="sidebar d-flex flex-column flex-shrink-0 p-3 bg-body-tertiary">
         <div class="user-info mb-4">
             <h5>Bienvenido, <?php echo $nombre; ?></h5>
@@ -84,7 +82,7 @@ $usuarios = $stmt->fetchAll(PDO::FETCH_ASSOC);
                 </a>
             </li>
             <li>
-            <a href="crearProyecto.php?id_proyecto?"  class="nav-link link-body-emphasis">
+                <a href="crearProyecto.php?id_proyecto?" class="nav-link link-body-emphasis">
                     <svg class="bi pe-none me-2" width="16" height="16">
                         <use xlink:href="#speedometer2" />
                     </svg>
@@ -148,13 +146,13 @@ $usuarios = $stmt->fetchAll(PDO::FETCH_ASSOC);
                     <label for="id_usuario" class="form-label">Usuario:</label>
                     <select id="id_usuario" name="id_usuario" class="form-control" required>
                         <option value="" disabled selected>Selecciona un usuario</option>
-                        <?php if (!empty($usuarios)): ?>
-                            <?php foreach ($usuarios as $usuario): ?>
+                        <?php if (!empty($usuarios)) { ?>
+                            <?php foreach ($usuarios as $usuario) { ?>
                                 <option value="<?php echo htmlspecialchars($usuario['id_usuario']); ?>">
                                     <?php echo htmlspecialchars($usuario['nombre']); ?>
                                 </option>
-                            <?php endforeach; ?>
-                        <?php endif; ?>
+                            <?php } ?>
+                        <?php } ?>
                     </select>
                 </div>
 
@@ -194,11 +192,9 @@ $usuarios = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
                 <div class="mt-3 text-center">
                     <form action="php_controllers/tareaController.php" method="POST">
-                    <button type="submit" class="btn btn-primary" name="insertTareas">Añadir</button>
+                        <button type="submit" class="btn btn-primary" name="insertTareas">Añadir</button>
                     </form>
-                  
                     <a href="welcome.php" class="btn btn-secondary">Cancelar</a>
-                   
                 </div>
             </form>
         </div>

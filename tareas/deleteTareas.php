@@ -1,5 +1,6 @@
 <?php
-function deleteTareas($id_tarea) {
+function deleteTareas($id_tarea)
+{
     try {
         $conexion = openDB();
 

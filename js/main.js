@@ -2,29 +2,29 @@
  * Para crear una animacion de texto escribiendo solo el titulo 'BIENVENIDO A MULTITAREAS'
  */
 document.addEventListener("DOMContentLoaded", () => {
-  const textTranslations = ["BIENVENIDO A MULTITAREAS"];
-  const animatedText = document.getElementById("animatedText");
+    const textTranslations = ["BIENVENIDO A MULTITAREAS"];
+    const animatedText = document.getElementById("animatedText");
 
-  if (!animatedText) {
-      console.error("Elemento con id 'animatedText' no encontrado.");
-      return;
-  }
+    if (!animatedText) {
+        console.error("Elemento con id 'animatedText' no encontrado.");
+        return;
+    }
 
-  function typeText() {
-      const text = textTranslations[0]; // Solo un texto
-      let index = 0;
+    function typeText() {
+        const text = textTranslations[0]; // Solo un texto
+        let index = 0;
 
-      const typingInterval = setInterval(() => {
-          animatedText.textContent += text[index];
-          index++;
+        const typingInterval = setInterval(() => {
+            animatedText.textContent += text[index];
+            index++;
 
-          if (index === text.length) {
-              clearInterval(typingInterval); // Detener el intervalo al terminar
-          }
-      }, 100); // Velocidad de tipeo
-  }
+            if (index === text.length) {
+                clearInterval(typingInterval); // Detener el intervalo al terminar
+            }
+        }, 100); // Velocidad de tipeo
+    }
 
-  typeText(); 
+    typeText();
 });
 
 /**
@@ -83,15 +83,15 @@ document.addEventListener("DOMContentLoaded", () => {
                         nuevo_estado: newStatus,
                     }),
                 })
-                .then(response => response.json())
-                .then(data => {
-                    if (data.success) {
-                        console.log(`Tarea ${taskId} actualizada a estado ${newStatus}`);
-                    } else {
-                        console.error("Error al actualizar la tarea:", data.message);
-                    }
-                })
-                .catch(err => console.error("Error en la petición AJAX:", err));
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            console.log(`Tarea ${taskId} actualizada a estado ${newStatus}`);
+                        } else {
+                            console.error("Error al actualizar la tarea:", data.message);
+                        }
+                    })
+                    .catch(err => console.error("Error en la petición AJAX:", err));
             }
         });
     });
