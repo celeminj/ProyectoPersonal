@@ -1,7 +1,23 @@
 <?php
-require_once './basedatos/bd.php';
 
-$pdo = openDB();
+function bd () {
+    $host = 'localhost';
+    $db = 'gestion_proyectos';
+    $user = 'root';
+    $pass = 'mysql';
+    
+    try {
+        $conexion = new PDO("mysql:host=$host;dbname=$db;charset=utf8", $user, $pass);
+        $conexion->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+    } catch (PDOException $e) {
+        die("Error de conexión: " . $e->getMessage());
+    }
+    return $conexion;
+}
+  
+
+$pdo = bd();
+
 $nombre = '';
 $proyecto = '';
 if (isset($_SESSION['id_usuario'])) {

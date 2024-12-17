@@ -19,12 +19,32 @@ if ($id_proyecto) {
     $tareas = selectTarea($id_proyecto);
 } else {
     echo "Se ha guardado";
-    $tareas = [];  
+    $tareas = [];
 }
 
 // Resto de la lógica de proyectos
 $userId = $_SESSION['id_usuario'];
 $proyectos = selectProyectos($userId);
+
+
+// Obtén el id_proyecto desde la URL
+$id_proyecto = isset($_GET['id_proyecto']) ? $_GET['id_proyecto'] : null;
+
+// require_once 'selectUsuarios';
+
+// Consulta para obtener los usuarios vinculados a este proyecto
+$query = "
+        SELECT usuarios.id_usuario, usuarios.nombre 
+        FROM usuarios
+        INNER JOIN usuarios_proyectos ON usuarios.id_usuario = usuarios_proyectos.id_usuario
+        WHERE usuarios_proyectos.id_proyecto = :id_proyecto
+    ";
+$stmt = $pdo->prepare($query);
+$stmt->bindParam(':id_proyecto', $id_proyecto, PDO::PARAM_INT);
+$stmt->execute();
+
+// Guardar resultados
+$usuarios = $stmt->fetchAll(PDO::FETCH_ASSOC);
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -80,7 +100,7 @@ $proyectos = selectProyectos($userId);
                 </a>
             </li>
             <li>
-            <a href="crearProyecto.php?id_proyecto?"  class="nav-link link-body-emphasis">
+                <a href="crearProyecto.php?id_proyecto?" class="nav-link link-body-emphasis">
                     <svg class="bi pe-none me-2" width="16" height="16">
                         <use xlink:href="#speedometer2" />
                     </svg>
@@ -110,94 +130,212 @@ $proyectos = selectProyectos($userId);
         </ul>
         <hr>
     </div>
-        <div class="container">
-            <h1>Proyecto</h1>
+    <div class="container">
+        <h1>Proyecto</h1>
         <h1>Gestión de Tareas</h1>
-    <div class="mt-3 text-center">
+        <div class="mt-3 text-center">
             <a href="crearTarea.php?id_proyecto=<?php echo $id_proyecto; ?>" class="btn btn-primary ms-3">Añadir
                 Tarea</a>
         </div>
-    <table class="table">
-        <thead>
-            <tr>
-                <th>En proceso</th>
-                <th>En revision</th>
-                <th>Acabado</th>
-            </tr>
-        </thead>
-        <tbody class="editarTareas">
-            <tr >
-                <!-- Columna "En proceso" -->
-                <td class="box droppable" id="in-progress" data-status="1">
-                    
-                    <?php foreach ($tareas as $tarea){ ?>
-                        <?php if ($tarea['id_estado_tarea'] == 1){ ?>
-                            <div class="item" id="task-<?php echo $tarea['id_tarea']; ?>" draggable="true" 
-                                data-id="<?php echo $tarea['id_tarea']; ?>">
-                                
-                                <strong>Nombre:</strong> <?php echo $tarea['nombre_tarea']; ?><br>
-                                <input type="text" name="nombre_tarea" value="<?php echo $tarea['nombre_tarea']; ?>">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>En proceso</th>
+                    <th>En revision</th>
+                    <th>Acabado</th>
+                </tr>
+            </thead>
+            <tbody class="editarTareas">
+                <tr>
+                    <!-- Columna "En proceso" -->
+                    <td class="box droppable" id="in-progress" data-status="1">
+                        <?php foreach ($tareas as $tarea) { ?>
+                            <?php if ($tarea['id_estado_tarea'] == 1) { ?>
+                                <div class="item" id="task-<?php echo $tarea['id_tarea']; ?>" draggable="true"
+                                    data-id="<?php echo $tarea['id_tarea']; ?>">
+                                    <form action="php_controllers/tareaController.php" method="POST">
+                                        <strong>Nombre:</strong>
+                                        <input type="text" name="nombre_tarea"
+                                            value="<?php echo $tarea['nombre_tarea']; ?>"><br>
 
-                                <strong>Descripción:</strong> <?php echo $tarea['descripcion']; ?><br>
-                                <strong>Fecha inicio:</strong> <?php echo $tarea['fecha_inicio']; ?><br>
-                                <strong>Fecha final:</strong> <?php echo $tarea['fecha_final']; ?>
-                                <strong>Usuario: </strong> <?php echo $tarea['nombre']; ?>
-                                <strong>Tipo de tarea: </strong> <?php echo $tarea['tipo_tarea']; ?>  </a>
-                                </form> 
-                               
-                                
-                               
-                            </div>
+                                        <strong>Descripción:</strong>
+                                        <input type="text" name="descripcion" value="<?php echo $tarea['descripcion']; ?>"><br>
+
+                                        <strong>Fecha inicio:</strong>
+                                        <input type="date" name="fecha_inicio"
+                                            value="<?php echo $tarea['fecha_inicio']; ?>"><br>
+
+                                        <strong>Fecha final:</strong>
+                                        <input type="date" name="fecha_final" value="<?php echo $tarea['fecha_final']; ?>"><br>
+
+                                        <div class="mb-3">
+                                            <label for="id_usuario" class="form-label">Usuario:</label>
+                                            <select id="id_usuario" name="id_usuario" class="form-control" required>
+
+                                                <?php if (!empty($usuarios)) { ?>
+                                                    <?php foreach ($usuarios as $usuario) { ?>
+                                                        <option value="<?php echo htmlspecialchars($usuario['id_usuario']); ?>">
+                                                            <?php echo htmlspecialchars($usuario['nombre']); ?>
+                                                        </option>
+                                                    <?php } ?>
+                                                <?php } ?>
+                                            </select>
+                                        </div>
+
+                                        <div class="mb-3">
+                                            <label class="form-label">Tipo de tarea:</label>
+                                            <div>
+                                                <input type="radio" id="programacion" name="id_tipo_tarea" value="1" required>
+                                                <label for="programacion" class="btn btn-outline-primary">Programación</label>
+                                            </div>
+                                            <div>
+                                                <input type="radio" id="base_datos" name="id_tipo_tarea" value="2" required>
+                                                <label for="base_datos" class="btn btn-outline-secondary">Base de Datos</label>
+                                            </div>
+                                            <div>
+                                                <input type="radio" id="diseno" name="id_tipo_tarea" value="3" required>
+                                                <label for="diseno" class="btn btn-outline-success">Diseño</label>
+                                            </div>
+                                        </div>
+                                        <!-- Para el ID de la tarea, lo necesitas también en el formulario -->
+                                        <input type="hidden" name="id_tarea" value="<?php echo $tarea['id_tarea']; ?>">
+
+                                        <button type="submit" class="btn btn-primary" name="updateTareas">Cambiar Tarea</button>
+                                    </form>
+                                </div>
+                            <?php } ?>
                         <?php } ?>
-                    <?php  } ?>
-                </td>
+                    </td>
 
-                <!-- Columna "En revisión" -->
-                <td class="box droppable" id="review" data-status="2">
-                    <?php foreach ($tareas as $tarea){ ?>
-                        <?php if ($tarea['id_estado_tarea'] == 2){ ?>
-                            <div class="item" id="task-<?php echo $tarea['id_tarea']; ?>" draggable="true" 
-                                data-id="<?php echo $tarea['id_tarea']; ?>">
-                                <a href="welcome.php" style="text-decoration: none" >
-                                <strong>Nombre:</strong> <?php echo $tarea['nombre_tarea']; ?><br>
-                                <strong>Descripción:</strong> <?php echo $tarea['descripcion']; ?><br>
-                                <strong>Fecha inicio:</strong> <?php echo $tarea['fecha_inicio']; ?><br>
-                                <strong>Fecha final:</strong> <?php echo $tarea['fecha_final']; ?>
-                                <strong>Usuario: </strong> <?php echo $tarea['nombre']; ?>
-                                <strong>Tipo de tarea: </strong> <?php echo $tarea['tipo_tarea']; ?>  
-                                </a>
-                            </div>
-                        <?php }?>
-                    <?php } ?>
-                </td>
 
-                <!-- Columna "Acabado" -->
-                <td class="box droppable" id="completed" data-status="3">
-                    <?php foreach ($tareas as $tarea){ ?>
-                        <?php if ($tarea['id_estado_tarea'] == 3){ ?>
-                            <div class="item" id="task-<?php echo $tarea['id_tarea']; ?>" draggable="true" 
-                                data-id="<?php echo $tarea['id_tarea']; ?>">
-                                <a href="welcome.php" style="text-decoration: none" >
-                                <strong>Nombre:</strong> <?php echo $tarea['nombre_tarea']; ?><br>
-                                <strong>Descripción:</strong> <?php echo $tarea['descripcion']; ?><br>
-                                <strong>Fecha inicio:</strong> <?php echo $tarea['fecha_inicio']; ?><br>
-                                <strong>Fecha final:</strong> <?php echo $tarea['fecha_final']; ?>
-                                <strong>Usuario: </strong> <?php echo $tarea['nombre']; ?>
-                                <strong>Tipo de tarea: </strong> <?php echo $tarea['tipo_tarea']; ?>
-                                </a>  
-                            </div>
+                    <!-- Columna "En revisión" -->
+                    <td class="box droppable" id="review" data-status="2">
+                        <?php foreach ($tareas as $tarea) { ?>
+                            <?php if ($tarea['id_estado_tarea'] == 2) { ?>
+                                <div class="item" id="task-<?php echo $tarea['id_tarea']; ?>" draggable="true"
+                                    data-id="<?php echo $tarea['id_tarea']; ?>">
+                                    <form action="php_controllers/tareaController.php" method="POST">
+                                        <strong>Nombre:</strong>
+                                        <input type="text" name="nombre_tarea"
+                                            value="<?php echo $tarea['nombre_tarea']; ?>"><br>
+
+                                        <strong>Descripción:</strong>
+                                        <input type="text" name="descripcion" value="<?php echo $tarea['descripcion']; ?>"><br>
+
+                                        <strong>Fecha inicio:</strong>
+                                        <input type="date" name="fecha_inicio"
+                                            value="<?php echo $tarea['fecha_inicio']; ?>"><br>
+
+                                        <strong>Fecha final:</strong>
+                                        <input type="date" name="fecha_final" value="<?php echo $tarea['fecha_final']; ?>"><br>
+
+                                        <div class="mb-3">
+                                            <label for="id_usuario" class="form-label">Usuario:</label>
+                                            <select id="id_usuario" name="id_usuario" class="form-control" required>
+
+                                                <?php if (!empty($usuarios)) { ?>
+                                                    <?php foreach ($usuarios as $usuario) { ?>
+                                                        <option value="<?php echo htmlspecialchars($usuario['id_usuario']); ?>">
+                                                            <?php echo htmlspecialchars($usuario['nombre']); ?>
+                                                        </option>
+                                                    <?php } ?>
+                                                <?php } ?>
+                                            </select>
+                                        </div>
+
+                                        <div class="mb-3">
+                                            <label class="form-label">Tipo de tarea:</label>
+                                            <div>
+                                                <input type="radio" id="programacion" name="id_tipo_tarea" value="1" required>
+                                                <label for="programacion" class="btn btn-outline-primary">Programación</label>
+                                            </div>
+                                            <div>
+                                                <input type="radio" id="base_datos" name="id_tipo_tarea" value="2" required>
+                                                <label for="base_datos" class="btn btn-outline-secondary">Base de Datos</label>
+                                            </div>
+                                            <div>
+                                                <input type="radio" id="diseno" name="id_tipo_tarea" value="3" required>
+                                                <label for="diseno" class="btn btn-outline-success">Diseño</label>
+                                            </div>
+                                        </div>
+                                        <!-- Para el ID de la tarea, lo necesitas también en el formulario -->
+                                        <input type="hidden" name="id_tarea" value="<?php echo $tarea['id_tarea']; ?>">
+
+                                        <button type="submit" class="btn btn-primary" name="updateTareas">Cambiar Tarea</button>
+                                    </form>
+                                </div>
+                            <?php } ?>
                         <?php } ?>
-                    <?php } ?>
-                </td>
-            </tr>
-        </tbody>
-    </table>
-</div>
+                    </td>
 
-        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
-            integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
-            crossorigin="anonymous"></script>
-        <script src="js/main.js"></script>
+                    <!-- Columna "Acabado" -->
+                    <td class="box droppable" id="completed" data-status="3">
+                        <?php foreach ($tareas as $tarea) { ?>
+                            <?php if ($tarea['id_estado_tarea'] == 3) { ?>
+                                <div class="item" id="task-<?php echo $tarea['id_tarea']; ?>" draggable="true"
+                                    data-id="<?php echo $tarea['id_tarea']; ?>">
+                                    <form action="php_controllers/tareaController.php" method="POST">
+                                        <strong>Nombre:</strong>
+                                        <input type="text" name="nombre_tarea"
+                                            value="<?php echo $tarea['nombre_tarea']; ?>"><br>
+
+                                        <strong>Descripción:</strong>
+                                        <input type="text" name="descripcion" value="<?php echo $tarea['descripcion']; ?>"><br>
+
+                                        <strong>Fecha inicio:</strong>
+                                        <input type="date" name="fecha_inicio"
+                                            value="<?php echo $tarea['fecha_inicio']; ?>"><br>
+
+                                        <strong>Fecha final:</strong>
+                                        <input type="date" name="fecha_final" value="<?php echo $tarea['fecha_final']; ?>"><br>
+
+                                        <div class="mb-3">
+                                            <label for="id_usuario" class="form-label">Usuario:</label>
+                                            <select id="id_usuario" name="id_usuario" class="form-control" required>
+
+                                                <?php if (!empty($usuarios)) { ?>
+                                                    <?php foreach ($usuarios as $usuario) { ?>
+                                                        <option value="<?php echo htmlspecialchars($usuario['id_usuario']); ?>">
+                                                            <?php echo htmlspecialchars($usuario['nombre']); ?>
+                                                        </option>
+                                                    <?php } ?>
+                                                <?php } ?>
+                                            </select>
+                                        </div>
+
+                                        <div class="mb-3">
+                                            <label class="form-label">Tipo de tarea:</label>
+                                            <div>
+                                                <input type="radio" id="programacion" name="id_tipo_tarea" value="1" required>
+                                                <label for="programacion" class="btn btn-outline-primary">Programación</label>
+                                            </div>
+                                            <div>
+                                                <input type="radio" id="base_datos" name="id_tipo_tarea" value="2" required>
+                                                <label for="base_datos" class="btn btn-outline-secondary">Base de Datos</label>
+                                            </div>
+                                            <div>
+                                                <input type="radio" id="diseno" name="id_tipo_tarea" value="3" required>
+                                                <label for="diseno" class="btn btn-outline-success">Diseño</label>
+                                            </div>
+                                        </div>
+                                        <!-- Para el ID de la tarea, lo necesitas también en el formulario -->
+                                        <input type="hidden" name="id_tarea" value="<?php echo $tarea['id_tarea']; ?>">
+
+                                        <button type="submit" class="btn btn-primary" name="updateTareas">Cambiar Tarea</button>
+                                    </form>
+                                </div>
+                            <?php } ?>
+                        <?php } ?>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
+        crossorigin="anonymous"></script>
+    <script src="js/main.js"></script>
 </body>
 
 </html>
