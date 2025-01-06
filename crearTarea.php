@@ -14,8 +14,6 @@ if (!isset($_SESSION['id_usuario'])) {
 // Obtén el id_proyecto desde la URL
 $id_proyecto = isset($_GET['id_proyecto']) ? $_GET['id_proyecto'] : null;
 
-// require_once 'selectUsuarios';
-
 // Consulta para obtener los usuarios vinculados a este proyecto
 $query = "
         SELECT usuarios.id_usuario, usuarios.nombre 
@@ -29,6 +27,7 @@ $stmt->execute();
 
 // Guardar resultados
 $usuarios = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
 
 ?>
 <!DOCTYPE html>
@@ -45,7 +44,7 @@ $usuarios = $stmt->fetchAll(PDO::FETCH_ASSOC);
 </head>
 
 <body>
-    <?php require_once('mensaje.php');?>
+    <?php require_once('mensaje.php'); ?>
     <div class="sidebar d-flex flex-column flex-shrink-0 p-3 bg-body-tertiary">
         <div class="user-info mb-4">
             <h5>Bienvenido, <?php echo $nombre; ?></h5>
@@ -113,6 +112,7 @@ $usuarios = $stmt->fetchAll(PDO::FETCH_ASSOC);
         <hr>
     </div>
     <div class="container text-center mt-5">
+        <input type="hidden" name="id_proyecto" value="<?php echo $id_proyecto; ?>">
         <h1><strong>Crear Tareas</strong></h1>
     </div>
     <table>
@@ -155,47 +155,39 @@ $usuarios = $stmt->fetchAll(PDO::FETCH_ASSOC);
                         <?php } ?>
                     </select>
                 </div>
-
                 <div class="mb-3">
                     <label class="form-label">Estado de la tarea:</label>
-                    <div>
-                        <input type="radio" id="enproceso" name="id_estado_tarea" value="1" required>
-                        <label for="enproceso" class="btn btn-outline-primary">En proceso</label>
-                    </div>
-                    <div>
-                        <input type="radio" id="enrevision" name="id_estado_tarea" value="2" required>
-                        <label for="enrevision" class="btn btn-outline-primary">En revision</label>
-                    </div>
-                    <div>
-                        <input type="radio" id="acabado" name="id_estado_tarea" value="3" required>
-                        <label for="acabado" class="btn btn-outline-primary">Acabado</label>
-                    </div>
-
+                    <label class="btn btn-outline-primary">
+                        <input type="radio" id="enproceso" name="estado_tarea" value="En proceso" required>
+                        En proceso
+                    </label>
+                    <label class="btn btn-outline-primary">
+                        <input type="radio" id="enrevision" name="estado_tarea" value="En revision" required>
+                        En revision
+                    </label>
+                    <label class="btn btn-outline-primary">
+                        <input type="radio" id="acabado" name="estado_tarea" value="Acabado" required>
+                        Acabado
+                    </label>
                 </div>
 
                 <div class="mb-3">
                     <label class="form-label">Tipo de tarea:</label>
-                    <div>
-                        <input type="radio" id="programacion" name="id_tipo_tarea" value="1" required>
-                        <label for="programacion" class="btn btn-outline-primary">Programación</label>
-                    </div>
-                    <div>
-                        <input type="radio" id="base_datos" name="id_tipo_tarea" value="2" required>
-                        <label for="base_datos" class="btn btn-outline-secondary">Base de Datos</label>
-                    </div>
-                    <div>
-                        <input type="radio" id="diseno" name="id_tipo_tarea" value="3" required>
-                        <label for="diseno" class="btn btn-outline-success">Diseño</label>
-                    </div>
+                    <label class="btn btn-outline-primary">
+                        <input type="radio" name="tipo_tarea" value="Programacion" required>
+                        Programación
+                    </label>
+                    <label class="btn btn-outline-primary">
+                        <input type="radio" name="tipo_tarea" value="Base de Datos" required>
+                        Base de Datos
+                    </label>
+                    <label class="btn btn-outline-primary">
+                        <input type="radio" name="tipo_tarea" value="Diseño" required>
+                        Diseño
+                    </label>
                 </div>
-
-
-                <div class="mt-3 text-center">
-                    <form action="php_controllers/tareaController.php" method="POST">
-                        <button type="submit" class="btn btn-primary" name="insertTareas">Añadir</button>
-                    </form>
+                    <button type="submit" class="btn btn-primary" name="insertTareas">Añadir</button>
                     <a href="welcome.php" class="btn btn-secondary">Cancelar</a>
-                </div>
             </form>
         </div>
     </table>
