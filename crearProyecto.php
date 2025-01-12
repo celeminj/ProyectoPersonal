@@ -1,66 +1,85 @@
 <?php
 session_start();
 require_once 'basedatos/bd.php';
-require_once 'insertProyecto.php';
 require_once 'proyectos/usuarioAsociadoProyecto.php';
 
-if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['insert'])) {
-    if (!isset($_SESSION['id_usuario'])) {
-        echo "Error: No se encontró un usuario autenticado.";
-        exit;
-    }
 
-    $conexion = openDB();
-
-    $tituloProyecto = $_POST['titulo_proyecto'];
-    $idUsuarioAdmin = $_SESSION['id_usuario'];
-    $usuariosSeleccionados = $_POST['id_usuario_seleccionado'] ?? []; // Usuarios seleccionados (puede ser un array vacío).
-
+function verificarRol($conexion, $idRol, $nombreRol) {
     try {
-        // Iniciar transacción
+        $conexion = openDB(); 
+        $stmt = $conexion->prepare("SELECT id_rol FROM roles WHERE id_rol = :id_rol");
+        $stmt->bindParam(':id_rol', $idRol);
+        $stmt->execute();
+
+        if ($stmt->rowCount() === 0) {
+            // Si no existe, insertar el rol
+            $stmt = $conexion->prepare("INSERT INTO roles (id_rol, nombre_rol) VALUES (:id_rol, :nombre_rol)");
+            $stmt->bindParam(':id_rol', $idRol);
+            $stmt->bindParam(':nombre_rol', $nombreRol);
+            $stmt->execute();
+            
+        }
+        closeDB();
+    } catch (PDOException $e) {
+        die("Error al verificar o insertar el rol: " . $e->getMessage());
+    }
+}
+
+function insertarProyecto($conexion, $idUsuario, $tituloProyecto, $usuariosSeleccionados) {
+    try {
         $conexion->beginTransaction();
 
-        // Insertar el proyecto
+        // Verificar roles
+        verificarRol($conexion, 1, "Admin"); // Verificar rol Admin
+        verificarRol($conexion, 2, "Usuario"); // Verificar rol Usuario
+
+        // Insertar proyecto
         $stmt = $conexion->prepare("INSERT INTO proyectos (titulo_proyecto) VALUES (:titulo)");
         $stmt->bindParam(':titulo', $tituloProyecto);
         $stmt->execute();
+        $idProyecto = $conexion->lastInsertId();
 
-        // Obtener el ID del proyecto recién creado
-        $idProyecto = (int)$conexion->lastInsertId();
-
-        // Insertar al administrador con rol 1 (Admin)
-        $stmt = $conexion->prepare("INSERT INTO usuarios_proyectos (id_usuario, id_proyecto, id_rol) 
-                                    VALUES (:id_usuario, :id_proyecto, :id_rol)");
+        // Asignar rol de Admin al creador
+        $stmt = $conexion->prepare("INSERT INTO usuarios_proyectos (id_usuario, id_proyecto, id_rol) VALUES (:id_usuario, :id_proyecto, :id_rol)");
         $stmt->execute([
-            ':id_usuario' => $idUsuarioAdmin,
+            ':id_usuario' => $idUsuario,
             ':id_proyecto' => $idProyecto,
-            ':id_rol' => 1 // Rol de admin
+            ':id_rol' => 1
         ]);
 
-        // Insertar usuarios seleccionados con rol 2 (Usuario)
-        $stmt = $conexion->prepare("INSERT INTO usuarios_proyectos (id_usuario, id_proyecto, id_rol) 
-                                    VALUES (:id_usuario, :id_proyecto, :id_rol)");
-        foreach ($usuariosSeleccionados as $idUsuario) {
+        // Asignar usuarios seleccionados
+        foreach ($usuariosSeleccionados as $usuario) {
             $stmt->execute([
-                ':id_usuario' => $idUsuario,
+                ':id_usuario' => $usuario,
                 ':id_proyecto' => $idProyecto,
-                ':id_rol' => 2 // Rol de usuario normal
+                ':id_rol' => 2
             ]);
         }
 
-        // Confirmar transacción
         $conexion->commit();
-
-        echo "Proyecto creado correctamente. Se asignaron todos los usuarios seleccionados.";
+        echo "Proyecto creado y usuarios asignados correctamente.";
     } catch (PDOException $e) {
-        // Revertir transacción en caso de error
         $conexion->rollBack();
         echo "Error al crear el proyecto: " . $e->getMessage();
-    } finally {
-        closeDB();
     }
 }
+
+// Código para manejar el formulario
+if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['insert'])) {
+    if (!isset($_SESSION['id_usuario'])) {
+        die("Error: No se encontró un usuario autenticado.");
+    }
+
+    $idUsuario = $_SESSION['id_usuario'];
+    $tituloProyecto = $_POST['titulo_proyecto'];
+    $usuariosSeleccionados = $_POST['id_usuario_seleccionado'] ?? [];
+
+    $conexion = openDB();
+    insertarProyecto($conexion, $idUsuario, $tituloProyecto, $usuariosSeleccionados);
+    closeDB();
+}
 ?>
+
 
 
 <!DOCTYPE html>
@@ -171,9 +190,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['insert'])) {
                     closeDB();
                     ?>
                 </select>
-
                 <br>
-
                 <div class="mt-3 text-center">
                     <button type="submit" class="btn btn-primary" name="insert">Crear Proyecto</button>
                     <a href="welcome.php" class="btn btn-secondary">Atrás</a>

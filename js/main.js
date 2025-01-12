@@ -32,9 +32,10 @@ document.addEventListener("DOMContentLoaded", () => {
  */
 // DRAG AND DROP 
 function setupDragAndDrop(taskSelector, dropZoneSelector, apiEndpoint) {
-    const tasks = document.querySelectorAll(".item"); // Tareas
-    const dropZones = document.querySelectorAll(".droppable"); // Zonas de drop
+    const tasks = document.querySelectorAll(taskSelector); // Selección de tareas
+    const dropZones = document.querySelectorAll(dropZoneSelector); // Selección de zonas de drop
 
+    // Configuración de eventos para tareas
     tasks.forEach(task => {
         task.addEventListener("dragstart", e => {
             e.dataTransfer.setData("text/plain", e.target.dataset.id);
@@ -46,6 +47,7 @@ function setupDragAndDrop(taskSelector, dropZoneSelector, apiEndpoint) {
         });
     });
 
+    // Configuración de eventos para zonas de drop
     dropZones.forEach(zone => {
         zone.addEventListener("dragover", e => {
             e.preventDefault();
@@ -60,18 +62,18 @@ function setupDragAndDrop(taskSelector, dropZoneSelector, apiEndpoint) {
             e.preventDefault();
             zone.classList.remove("drag-over");
 
-            const taskId = e.dataTransfer.getData("text/plain"); // ID de la tarea
+            const taskId = e.dataTransfer.getData("text/plain"); // ID de la tarea arrastrada
             const taskElement = document.querySelector(`#task-${taskId}`);
 
             if (taskElement) {
-                // Añadir la tarea a la zona de drop
+                // Mover tarea al nuevo contenedor
                 zone.appendChild(taskElement);
 
                 // Obtener el nuevo estado desde la zona de drop
                 const newStatus = zone.dataset.status;
 
-                // Llamar al servidor para actualizar el estado de la tarea
-                fetch(`php_controllers/tareaController.php`, {
+                // Enviar actualización al servidor
+                fetch(apiEndpoint, {
                     method: "POST",
                     headers: {
                         "Content-Type": "application/json"
@@ -83,15 +85,20 @@ function setupDragAndDrop(taskSelector, dropZoneSelector, apiEndpoint) {
                 })
                     .then(response => {
                         if (!response.ok) {
-                            throw new Error('Error en la solicitud: ' + response.statusText);
+                            throw new Error(`Error en la solicitud: ${response.statusText}`);
                         }
-                        return response.json(); // Suponiendo que devuelves un JSON como respuesta
+                        return response.json(); // Suponiendo que el servidor devuelve un JSON
                     })
                     .then(data => {
-                        console.log(data.mensaje); // Mensaje de confirmación del servidor
+                        if (data.success) {
+                            console.log(data.mensaje || "Tarea actualizada con éxito");
+                        } else {
+                            console.error(data.error || "Error al actualizar la tarea");
+                        }
                     })
                     .catch(error => {
-                        console.error('Error:', error);
+                        console.error("Error al conectar con el servidor:", error);
+                        alert("Hubo un problema al actualizar el estado de la tarea. Inténtalo nuevamente.");
                     });
             }
         });
@@ -101,4 +108,3 @@ function setupDragAndDrop(taskSelector, dropZoneSelector, apiEndpoint) {
 document.addEventListener("DOMContentLoaded", () => {
     setupDragAndDrop(".item", ".droppable", "php_controllers/tareaController.php");
 });
-

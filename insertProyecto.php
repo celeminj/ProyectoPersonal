@@ -5,8 +5,10 @@ require_once 'basedatos/bd.php';
 function verificarRolAdmin($conexion) {
     try {
         // Verificar si el rol "Admin" ya existe
-        $stmt = $conexion->prepare("SELECT id_rol FROM roles WHERE nombre_rol = :nombre_rol");
+        $stmt = $conexion->prepare("SELECT id_rol, nombre_rol FROM roles WHERE id_rol = :id_rol");
+        $idRol = 1;
         $nombreRol = "Admin";
+        $stmt->bindParam(':id_rol', $idRol);
         $stmt->bindParam(':nombre_rol', $nombreRol);
         $stmt->execute();
 

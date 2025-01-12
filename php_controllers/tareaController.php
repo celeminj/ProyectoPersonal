@@ -1,4 +1,10 @@
 <?php
+require_once '../basedatos/bd.php';
+require_once '../tareas/insertTareas.php';
+require_once '../tareas/deleteTareas.php';
+require_once '../tareas/editTareas.php';
+require_once '../proyectos/usuarioAsociadoProyecto.php';
+
 if (session_status() === PHP_SESSION_NONE) {
   session_start();
 }
@@ -17,11 +23,7 @@ if (isset($_SESSION['id_proyecto'])) {
   $id_proyecto = 0; // o el valor adecuado
 }
 
-require_once '../basedatos/bd.php';
-require_once '../tareas/insertTareas.php';
-require_once '../tareas/deleteTareas.php';
-require_once '../tareas/editTareas.php';
-require_once '../proyectos/usuarioAsociadoProyecto.php';
+
 
 if (isset($_POST['insertTareas'])) {
   $id_proyecto = $_POST['id_proyecto'];
@@ -52,7 +54,7 @@ if (isset($_POST['insertTareas'])) {
 
 } elseif (isset($_POST['updateTareas'])) {
 
-  $id_proyecto = $_POST['id_proyecto'];
+  $id_proyecto = $_SESSION['id_proyecto'] ?? $_POST['id_proyecto'];
   $id_tarea = $_POST['id_tarea'];
 
   // Actualizamos pasando los valores correctos para tipo de tarea
@@ -63,7 +65,8 @@ if (isset($_POST['insertTareas'])) {
     $_POST['fecha_inicio'],
     $_POST['fecha_final'],
     $_POST['id_usuario'],
-    $_POST['tipo_tarea'] // nombre del tipo de tarea
+    $_POST['tipo_tarea'],
+    id_estado_tarea: $_POST['estado_tarea'] // nombre del tipo de tarea
   );
 
   echo 'Se ha editado la tarea';
