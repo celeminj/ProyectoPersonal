@@ -1,21 +1,26 @@
-# Nombre del Proyecto
+# Proyecto Multitareas
 
-Una breve descripción del proyecto, indicando su propósito y características principales.
+Es una aplicacion para crear proyectos y gestionarlos, dentro de cada proyecto puedes añadir personas y crear tareas especificas para cada usuario.
+El proposito es tener una herramienta seria y organizada para poder ver tus tareas organizadas y ver como va cada proyecto.
 
 ## Características
 
-- **Característica 1:** Breve descripción.
-- **Característica 2:** Breve descripción.
-- **Característica 3:** Breve descripción.
+Sus caracterisitcas principales:
+1. Crear proyectos
+2. Añadir usuarios al proyecto
+3. Crear tareas para cada usuario
 
 ## Requisitos
 
-- [Lenguaje/tecnología](https://example.com) (por ejemplo, PHP 8.0 o superior)
-- [Dependencia o librería](https://example.com) (por ejemplo, Composer)
-- Sistema operativo (por ejemplo, Windows, macOS, Linux)
+- [HTML](https://example.com) (HTML 5)
+- [CSS](https://example.com) (CSS)
+- [JAVASCRIPT](https://example.com) (JS)
+- [PHP](https://example.com) (PHP 8.00)
+- [BOOSTRAP](https://example.com) (Boostrap 5.3v)
+- Sistema operativo (Windows)
 
 ## Instalación
 
 1. Clona este repositorio en tu máquina local:
    ```bash
-   git clone https://github.com/usuario/nombre-del-proyecto.git
+   git clone https://github.com/celeminj/ProyectoPersonal.git
