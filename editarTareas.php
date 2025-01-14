@@ -2,49 +2,19 @@
 session_start();
 require_once 'basedatos/bd.php';
 require_once 'tareas/selectTareas.php';
-require_once 'selectProyecto.php';
+require_once 'proyectos/selectProyecto.php';
 require_once 'proyectos/usuarioAsociadoProyecto.php';
-require_once 'insertProyecto.php';
-
-
+require_once 'php_controllers/tareaSeleccionada.php';
+require_once 'php_controllers/usuarios-vinculados.php';
 // Verifica que el usuario haya iniciado sesión
 if (!isset($_SESSION['id_usuario'])) {
     header("Location: iniciarSesion.php");
     exit();
 }
-// Obtén el id_proyecto desde la URL
-$id_proyecto = isset($_GET['id_proyecto']) ? $_GET['id_proyecto'] : null;
-
-if (isset($_GET['id_tarea'])) {
-    $id_tarea = $_GET['id_tarea'];
-
-    // Consultar la tarea seleccionada desde la base de datos
-    $query = "SELECT * FROM tareas WHERE id_tarea = :id_tarea";
-    $stmt = $pdo->prepare($query);
-    $stmt->execute(['id_tarea' => $id_tarea]);
-    $tarea = $stmt->fetch();
-
-    // Si la tarea no existe, mostrar un mensaje de error
-    if (!$tarea) {
-        echo "Tarea no encontrada.";
-        exit;
-    }
-}
 
 // Resto de la lógica de proyectos
 $userId = $_SESSION['id_usuario'];
 $proyectos = selectProyectos($userId);
-
-// Consulta para obtener los usuarios vinculados a este proyecto
-$query = "
-        SELECT usuarios.id_usuario, usuarios.nombre 
-        FROM usuarios
-        INNER JOIN usuarios_proyectos ON usuarios.id_usuario = usuarios_proyectos.id_usuario
-        WHERE usuarios_proyectos.id_proyecto = :id_proyecto
-    ";
-$stmt = $pdo->prepare($query);
-$stmt->bindParam(':id_proyecto', $id_proyecto, PDO::PARAM_INT);
-$stmt->execute();
 
 // Guardar resultados
 $usuarios = $stmt->fetchAll(PDO::FETCH_ASSOC);

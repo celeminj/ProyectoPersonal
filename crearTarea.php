@@ -3,31 +3,15 @@ session_start();
 require_once 'basedatos/bd.php';
 require_once 'tareas/insertTareas.php';
 require_once 'proyectos/usuarioAsociadoProyecto.php';
-
-// Verifica que el usuario haya iniciado sesión
+require_once 'php_controllers/usuarios-vinculados.php';
 
 if (!isset($_SESSION['id_usuario'])) {
     header("Location: iniciarSesion.php");
     exit();
 }
 
-// Obtén el id_proyecto desde la URL
-$id_proyecto = isset($_GET['id_proyecto']) ? $_GET['id_proyecto'] : null;
-
-// Consulta para obtener los usuarios vinculados a este proyecto
-$query = "
-        SELECT usuarios.id_usuario, usuarios.nombre 
-        FROM usuarios
-        INNER JOIN usuarios_proyectos ON usuarios.id_usuario = usuarios_proyectos.id_usuario
-        WHERE usuarios_proyectos.id_proyecto = :id_proyecto
-    ";
-$stmt = $pdo->prepare($query);
-$stmt->bindParam(':id_proyecto', $id_proyecto, PDO::PARAM_INT);
-$stmt->execute();
-
 // Guardar resultados
 $usuarios = $stmt->fetchAll(PDO::FETCH_ASSOC);
-
 
 ?>
 <!DOCTYPE html>

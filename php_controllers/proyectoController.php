@@ -4,8 +4,10 @@ if (session_status() === PHP_SESSION_NONE) {
 }
 
 require_once '../proyectos/updateProyecto.php';
-require_once '../deleteProyecto.php';
-
+require_once '../proyectos/deleteProyecto.php';
+/**
+ * Busca si hay proyectos para editar
+ */
 if (isset($_POST['edit'])) {
   $id_proyecto = $_POST['id_proyecto'] ?? null;
   $titulo_proyecto = $_POST['titulo_proyecto'] ?? null;
@@ -29,14 +31,15 @@ if (isset($_POST['edit'])) {
   if ($id_proyecto) {
     $resultado = deleteProyecto($id_proyecto);
     if ($resultado['success']) {
-    echo $resultado['message'];
-} else {
-    echo $resultado['message'];
-}
+      echo $resultado['message'];
+    } else {
+      echo $resultado['message'];
+    }
     echo 'Se ha eliminado el proyecto';
     header('Location: ../welcome.php');
   }
   exit();
 
 }
+
 ?>

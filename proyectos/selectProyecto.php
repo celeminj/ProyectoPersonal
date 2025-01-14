@@ -1,5 +1,5 @@
 <?php
-require_once 'basedatos/bd.php';
+require_once './basedatos/bd.php';
 
 function selectProyectos($idUsuario) {
     $pdo = openDB();

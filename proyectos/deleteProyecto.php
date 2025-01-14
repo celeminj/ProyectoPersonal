@@ -1,5 +1,5 @@
 <?php
-require_once 'basedatos/bd.php';
+require_once __DIR__ . '/../basedatos/bd.php';
 
 function deleteProyecto($id_proyecto): array
 {

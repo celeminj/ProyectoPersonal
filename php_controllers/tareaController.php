@@ -9,8 +9,9 @@ if (session_status() === PHP_SESSION_NONE) {
   session_start();
 }
 
-
-// Verificar si ya está seteado el id_proyecto en la sesión o si viene en la URL
+/**
+ * Busca si hay proyectos en la session
+ */
 if (isset($_POST['id_proyecto'])) {
   $_SESSION['id_proyecto'] = $_POST['id_proyecto'];
   echo "hay proyecto";
@@ -19,16 +20,16 @@ if (isset($_POST['id_proyecto'])) {
 if (isset($_SESSION['id_proyecto'])) {
   $id_proyecto = $_SESSION['id_proyecto'];
 } else {
-  // Si no está presente, asigna un valor predeterminado o maneja el error
-  $id_proyecto = 0; // o el valor adecuado
+  
+  $id_proyecto = 0; 
 }
 
-
-
+/**
+ * Inserta las tareas 
+ */
 if (isset($_POST['insertTareas'])) {
   $id_proyecto = $_POST['id_proyecto'];
 
-  // Ahora estamos pasando los nombres de tipo y estado de tarea
   insertTarea(
     $_POST['nombre_tarea'],
     $_POST['descripcion'],
@@ -36,14 +37,16 @@ if (isset($_POST['insertTareas'])) {
     $_POST['fecha_final'],
     $_POST['id_usuario'],
     $_POST['id_proyecto'],
-    $_POST['estado_tarea'], // nombre del estado de tarea
-    $_POST['tipo_tarea'] // nombre del tipo de tarea
+    $_POST['estado_tarea'], 
+    $_POST['tipo_tarea'] 
   );
   echo 'Se ha insertado una tarea';
 
   header('Location: ../gestionarProyecto.php?id_proyecto=' . $id_proyecto);
   exit();
-
+/**
+ *  Borra las tareas selecionadas
+ */
 } elseif (isset($_POST['delete'])) {
   $id_proyecto = $_POST['id_proyecto'];
   deleteTareas($_POST['id_tarea']);
@@ -52,6 +55,9 @@ if (isset($_POST['insertTareas'])) {
   header('Location: ../gestionarProyecto.php?id_proyecto=' . $id_proyecto);
   exit();
 
+/**
+ * Busca si hay tareas para editar
+ */
 } elseif (isset($_POST['updateTareas'])) {
 
   $id_proyecto = $_SESSION['id_proyecto'] ?? $_POST['id_proyecto'];
@@ -66,11 +72,12 @@ if (isset($_POST['insertTareas'])) {
     $_POST['fecha_final'],
     $_POST['id_usuario'],
     $_POST['tipo_tarea'],
-    id_estado_tarea: $_POST['estado_tarea'] // nombre del tipo de tarea
+    id_estado_tarea: $_POST['estado_tarea'] 
   );
 
   echo 'Se ha editado la tarea';
-  header('Location: ../gestionarProyecto.php?id_proyecto=' . $id_proyecto);
+  header('Location: ../gestionarProyecto.php?id_proyecto=' . $id_proyecto . '&id_tarea=' . $id_tarea);
+
   exit();
 }
 ?>

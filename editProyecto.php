@@ -1,9 +1,10 @@
 <?php
 session_start();
 require_once 'basedatos/bd.php';
-require_once 'selectProyecto.php';
-require_once 'deleteProyecto.php';
+require_once 'proyectos/selectProyecto.php';
+require_once 'proyectos/deleteProyecto.php';
 require_once 'proyectos/usuarioAsociadoProyecto.php';
+require_once 'php_controllers/actualizarProyecto.php';
 
 // Verifica que el usuario haya iniciado sesión
 if (!isset($_SESSION['id_usuario'])) {
@@ -19,26 +20,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['delete'])) {
 $userId = $_SESSION['id_usuario'];
 $proyectos = selectProyectos($_SESSION['id_usuario']);
 
-if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['edit'])) {
-    $id_proyecto = $_POST['id_proyecto'];
-    $titulo_proyecto = $_POST['titulo_proyecto'];
 
-    // Llama a la función para actualizar el título del proyecto
-    updateProyecto($id_proyecto, $titulo_proyecto);
-    
-    // Redirige de vuelta a la página de proyectos después de editar
-    header("Location: welcome.php");
-    exit();
-}
-
-// Función para actualizar el proyecto
-function updateProyecto($id_proyecto, $titulo_proyecto) {
-    // Conéctate a la base de datos y actualiza el título del proyecto
-    global $pdo; // Asumiendo que tienes una conexión PDO
-
-    $stmt = $pdo->prepare("UPDATE proyectos SET titulo_proyecto = ? WHERE id_proyecto = ?");
-    $stmt->execute([$titulo_proyecto, $id_proyecto]);
-}
 ?>
 <!DOCTYPE html>
 <html lang="en">

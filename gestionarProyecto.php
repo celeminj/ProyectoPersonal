@@ -2,11 +2,9 @@
 session_start();
 require_once 'basedatos/bd.php';
 require_once 'tareas/selectTareas.php';
-require_once 'selectProyecto.php';
+require_once 'proyectos/selectProyecto.php';
 require_once 'tareas/deleteTareas.php';
 require_once 'proyectos/usuarioAsociadoProyecto.php';
-require_once 'insertProyecto.php';
-
 
 // Verifica que el usuario haya iniciado sesión
 if (!isset($_SESSION['id_usuario'])) {
@@ -16,7 +14,7 @@ if (!isset($_SESSION['id_usuario'])) {
 // Obtén el id_proyecto desde la URL
 $id_proyecto = isset($_GET['id_proyecto']) ? $_GET['id_proyecto'] : null;
 
-// Si id_proyecto está presente, realiza la consulta
+// Si id_proyecto esta presente, realiza la consulta
 if ($id_proyecto) {
     $tareas = selectTarea($id_proyecto);
 } else {
@@ -27,7 +25,6 @@ if ($id_proyecto) {
 // Resto de la lógica de proyectos
 $userId = $_SESSION['id_usuario'];
 $proyectos = selectProyectos($userId);
-
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['delete'])) {
     deleteTareas($id_tarea);

@@ -1,8 +1,8 @@
 <?php
 session_start();
 require_once 'basedatos/bd.php';
-require_once 'selectProyecto.php';
-require_once 'deleteProyecto.php';
+require_once 'proyectos/selectProyecto.php';
+require_once 'proyectos/deleteProyecto.php';
 require_once 'proyectos/usuarioAsociadoProyecto.php';
 require_once 'proyectos/updateProyecto.php';
 
@@ -15,7 +15,6 @@ if (!isset($_SESSION['id_usuario'])) {
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['delete'])) {
     deleteProyecto($id_proyecto);
 }
-
 
 // Obtén los proyectos del usuario actual
 $userId = $_SESSION['id_usuario'];
