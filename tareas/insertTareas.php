@@ -8,7 +8,13 @@ if (isset($_POST['insertTareas'])) {
     echo '</pre>';
    
 }
-
+/**
+ * Summary of ensureEstadoTareaExists
+ * @param mixed $conexion
+ * @param mixed $nombreEstado
+ * @throws \Exception
+ * @return mixed
+ */
 function ensureEstadoTareaExists($conexion, $nombreEstado) {
     try {
         // Buscar si existe el estado
@@ -21,7 +27,7 @@ function ensureEstadoTareaExists($conexion, $nombreEstado) {
         if ($result) {
             return $result['id_estado_tarea']; // Retorna el ID si ya existe
         } else {
-            // Crear el estado si no existe
+           
             $insert = "INSERT INTO estado_tareas (estado_tarea) VALUES (:estado_tarea)";
             $stmt = $conexion->prepare($insert);
             $stmt->bindParam(':estado_tarea', $nombreEstado);
@@ -32,7 +38,13 @@ function ensureEstadoTareaExists($conexion, $nombreEstado) {
         throw new Exception("Error al garantizar estado de tarea: " . $e->getMessage());
     }
 }
-
+/**
+ * Summary of ensureTipoTareaExists
+ * @param mixed $conexion
+ * @param mixed $nombreTipo
+ * @throws \Exception
+ * @return mixed
+ */
 function ensureTipoTareaExists($conexion, $nombreTipo) {
     try {
         // Buscar si existe el tipo
@@ -56,7 +68,18 @@ function ensureTipoTareaExists($conexion, $nombreTipo) {
         throw new Exception("Error al garantizar tipo de tarea: " . $e->getMessage());
     }
 }
-
+/**
+ * Summary of insertTarea Inserta una tarea
+ * @param mixed $nombre_tarea
+ * @param mixed $descripcion
+ * @param mixed $fecha_inicio
+ * @param mixed $fecha_final
+ * @param mixed $id_usuario
+ * @param mixed $id_proyecto
+ * @param mixed $nombre_estado_tarea
+ * @param mixed $nombre_tipo_tarea
+ * @return array
+ */
 function insertTarea($nombre_tarea, $descripcion, $fecha_inicio, $fecha_final, $id_usuario, $id_proyecto, $nombre_estado_tarea, $nombre_tipo_tarea) {
     try {
         $conexion = openDB();
